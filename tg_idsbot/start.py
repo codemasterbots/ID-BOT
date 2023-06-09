@@ -16,16 +16,29 @@ from data import Data
 from config import Config
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 # Start Message
-@Client.on_message(filters.private & filters.incoming & filters.command("start"))
-async def start(bot, msg):
-    print("/start")
-    user = await bot.get_me()
-    mention = user["mention"]
-    await bot.send_message(
-        msg.chat.id,
-        Data.START.format(msg.from_user.mention, mention, msg.from_user.id),
-        reply_markup=InlineKeyboardMarkup(Data.buttons),
-    )
+@Client.on_message(filters.private & filters.command("start"))
+async def start(_, message):
+    # Check if the user is not subscribed
+    if not message.from_user.is_subscribed:
+        # Send a message asking the user to subscribe
+        await message.reply_text(
+            "You must subscribe to use this bot. Please click the button below to subscribe.",
+            reply_markup=InlineKeyboardMarkup(
+                [[
+                    InlineKeyboardButton(
+                        "Join Our Update Channel ❤️",
+                        url="https://t.me/CodeMasterTG"
+                    )
+                ]]
+            )
+        )
+        return
+
+    # Your existing code for the start command
+    # ...
+
